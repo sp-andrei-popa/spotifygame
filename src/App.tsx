@@ -1,25 +1,43 @@
-import React from 'react';
+import React, {createContext, useMemo, useState} from 'react';
 import logo from './logo.svg';
-import './App.css';
+import {GameContextType} from "./Types";
+import {Home} from "./pages/Home";
+import {Game} from "./pages/Game";
 
-function App() {
+export const GameContext = createContext<GameContextType>({
+  hasGameStarted: true,
+  setHasGameStarted: () => {},
+  hasUserLost: false,
+  setHasUserLost: () => {},
+  score: 0,
+  setScore: () => {},
+  isButtonVisible: true,
+  setIsButtonVisible: () => {}
+})
+
+const App = () => {
+  const [hasGameStarted, setHasGameStarted] = useState<boolean>(true);
+  const [hasUserLost, setHasUserLost] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const [isButtonVisible, setIsButtonVisible] = useState<boolean>(true);
+
+  const contextValue = useMemo(() => {
+    return {
+      hasGameStarted,
+      setHasGameStarted,
+      hasUserLost,
+      setHasUserLost,
+      score,
+      setScore,
+      isButtonVisible,
+      setIsButtonVisible,
+    };
+  }, [hasGameStarted, hasUserLost, score, isButtonVisible]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <GameContext.Provider value={contextValue}>
+      {hasGameStarted ? <Home/> : <Game/>}
+    </GameContext.Provider>
   );
 }
 
